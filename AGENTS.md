@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- All editable business data and bilingual (sq/en) copy lives in `src/content/siteContent.ts`; components read from it and hide sections whose data is empty — so the clinic can edit content in one place.
