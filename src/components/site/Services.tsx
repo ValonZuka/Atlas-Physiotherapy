@@ -3,6 +3,7 @@ import { Activity, ArrowUpRight, Bandage, Bone, Check, Hand, Stethoscope, Waves,
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { siteContent, type ServiceIcon } from "@/content/siteContent";
 import { useLang, useReveal } from "@/lib/site";
+import { Plus } from "lucide-react";
 import { CtaButtons, SectionHead } from "./Cta";
 
 const icons: Record<ServiceIcon, LucideIcon> = { stethoscope: Stethoscope, activity: Activity, hand: Hand, waves: Waves, bandage: Bandage, bone: Bone, zap: Zap };
@@ -30,6 +31,14 @@ export function Services() {
               </li>
             );
           })}
+          <li className="reveal" style={{ transitionDelay: `${(siteContent.services.length % 3) * 90}ms` }}>
+            <a href={`https://wa.me/${siteContent.business.whatsappNumber}?text=${encodeURIComponent(t(siteContent.moreServices.waMessage))}`} target="_blank" rel="noreferrer" className="card-lift group flex h-full w-full flex-col rounded-3xl border border-border bg-card p-7 text-left shadow-soft">
+              <span className="grid size-12 place-items-center rounded-2xl bg-sage-soft text-accent-foreground"><Plus className="size-6" /></span>
+              <h3 className="mt-6 text-xl font-semibold">{t(siteContent.moreServices.title)}</h3>
+              <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{t(siteContent.moreServices.copy)}</p>
+              <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-primary">WhatsApp<ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
+            </a>
+          </li>
         </ul>
       </div>
       <Dialog open={active !== null} onOpenChange={(o) => !o && setActive(null)}>

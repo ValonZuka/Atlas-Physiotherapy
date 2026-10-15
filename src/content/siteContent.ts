@@ -29,9 +29,11 @@ export const siteContent = {
     email: "", // e.g. "info@atlas-ks.com" — empty hides it
     address: { street: "14 Qershori, përballë Xhamisë", city: "Viti", country: "XK" },
     hours: [] as { days: L; time: string }[], // e.g. [{ days: { sq: "Hën–Sht", en: "Mon–Sat" }, time: "08:00–18:00" }]
-    mapEmbed:
-      "https://www.google.com/maps?q=" + encodeURIComponent("14 Qershori, Viti, Kosovo") + "&output=embed",
-    mapLink: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("ATLAS Fizioterapi Viti"),
+    /** Exact clinic coordinates (used for the map and search engines). */
+    geo: { lat: 42.3223057, lng: 21.3586494 },
+    mapEmbed: "https://www.google.com/maps?q=42.3223057,21.3586494&z=17&output=embed",
+    mapLink:
+      "https://www.google.com/maps/place/ATLAS+FIZIOTERAPI/@42.3223096,21.3560745,585m/data=!3m2!1e3!4b1!4m6!3m5!1s0x135463e56947af7f:0xe2ed2186b4658456!8m2!3d42.3223057!4d21.3586494",
   },
 
   socials: {
@@ -41,15 +43,12 @@ export const siteContent = {
 
   /** Set a feed widget embed URL (Behold / Elfsight) here later to replace the static grid. */
   socialFeedWidgetUrl: "",
-  /** Six post cards. Replace `url` with the direct link of each real post. */
-  socialPosts: [
-    { image: treatment.url, platform: "instagram", url: "https://www.instagram.com/atlas.fizioterapi/", caption: { sq: "Çdo seancë fillon me një vlerësim të kujdesshëm.", en: "Every session starts with a careful assessment." }, alt: { sq: "Fizioterapeut gjatë trajtimit", en: "Physiotherapist during treatment" } },
-    { image: space.url, platform: "instagram", url: "https://www.instagram.com/atlas.fizioterapi/", caption: { sq: "Ambienti ynë i qetë në Viti.", en: "Our calm space in Viti." }, alt: { sq: "Ambienti i klinikës ATLAS", en: "The ATLAS clinic space" } },
-    { image: hero.url, platform: "facebook", url: "https://www.facebook.com/p/ATLAS-Fizioterapi-61591298853529/", caption: { sq: "Ushtrime të përshtatura për rikuperim.", en: "Exercises tailored to your recovery." }, alt: { sq: "Ushtrim i udhëhequr", en: "Guided exercise" } },
-    { image: hero.url, platform: "instagram", url: "https://www.instagram.com/atlas.fizioterapi/", caption: { sq: "Lëvizja është ilaçi më i mirë.", en: "Movement is the best medicine." }, alt: { sq: "Pacient duke bërë ushtrime", en: "Patient exercising" } },
-    { image: treatment.url, platform: "facebook", url: "https://www.facebook.com/p/ATLAS-Fizioterapi-61591298853529/", caption: { sq: "Terapia manuale për lehtësim të dhimbjes.", en: "Manual therapy for pain relief." }, alt: { sq: "Terapi manuale", en: "Manual therapy" } },
-    { image: space.url, platform: "instagram", url: "https://www.instagram.com/atlas.fizioterapi/", caption: { sq: "Rezervoni terminin tuaj në WhatsApp.", en: "Book your appointment on WhatsApp." }, alt: { sq: "Hapësira e trajtimit", en: "Treatment room" } },
-  ],
+  /**
+   * Real social posts only. A post is shown only when `real: true`.
+   * When no real posts exist, only the follow buttons are shown.
+   * Example: { real: true, platform: "instagram", url: "https://www.instagram.com/p/XXXX/", image: "https://...", caption: { sq: "", en: "" }, alt: { sq: "", en: "" } }
+   */
+  socialPosts: [] as { real: boolean; platform: "instagram" | "facebook"; url: string; image: string; caption: L; alt: L }[],
 
   /** Leave empty to hide. Only add real, verified numbers. */
   stats: [] as { value: number; suffix?: string; label: L }[],
@@ -84,6 +83,13 @@ export const siteContent = {
     { icon: "zap" as ServiceIcon, title: { sq: "Trajtimi me Shockwave", en: "Shockwave therapy" }, copy: { sq: "Ndihmon në reduktimin e dhimbjes dhe përmirësimin e funksionit te kalcifikimi i thembrës.", en: "Helps reduce pain and improve function with heel spurs." }, details: { sq: "Trajtimi me Shockwave ndihmon në reduktimin e dhimbjes dhe përmirësimin e funksionit te kalcifikimi i thembrës.", en: "Shockwave therapy helps reduce pain and improve function in heel spur (calcification) cases." }, image: treatment.url },
   ],
 
+  /** Final "and more" card after the services; opens WhatsApp with this message. */
+  moreServices: {
+    title: { sq: "Dhe më shumë…", en: "And more…" },
+    copy: { sq: "Pyesni për trajtime të tjera", en: "Ask about other treatments" },
+    waMessage: { sq: "Përshëndetje, dua të pyes për një trajtim tjetër.", en: "Hello, I'd like to ask about another treatment." },
+  },
+
   benefits: [
     { title: { sq: "Qasje individuale", en: "Individual approach" }, copy: { sq: "Plani juaj ndërtohet pas një bisede dhe vlerësimi personal.", en: "Your plan is built after a personal conversation and assessment." } },
     { title: { sq: "Staf profesional", en: "Qualified staff" }, copy: { sq: "Fizioterapeutë të diplomuar që ju udhëheqin në çdo seancë.", en: "Graduate physiotherapists guide you through every session." } },
@@ -115,11 +121,15 @@ export const siteContent = {
 
   faq: [
     { q: { sq: "Si rezervoj një termin?", en: "How do I book an appointment?" }, a: { sq: "Terminet caktohen vetëm përmes WhatsApp (045 207 056) ose me telefon. Na shkruani shërbimin dhe ditën/orën e dëshiruar dhe ne ju konfirmojmë terminin.", en: "Appointments are arranged only via WhatsApp (045 207 056) or by phone. Send us the service and your preferred day/time and we'll confirm." } },
+    // TODO confirm with clinic
     { q: { sq: "Çfarë ndodh në vizitën e parë?", en: "What happens at the first visit?" }, a: { sq: "Fillojmë me një bisedë dhe vlerësim të lëvizjes, pastaj ju propozojmë një plan trajtimi. Shpesh trajtimi fillon po atë ditë.", en: "We start with a conversation and movement assessment, then propose a treatment plan. Treatment often starts the same day." } },
     { q: { sq: "Çfarë duhet të sjell?", en: "What should I bring?" }, a: { sq: "Rroba të rehatshme, dokumentacionin mjekësor nëse e keni (raporte, grafi, MRI) dhe listën e barnave që përdorni.", en: "Comfortable clothes, any medical documents you have (reports, X-rays, MRI) and a list of medications you take." } },
+    // TODO confirm with clinic
     { q: { sq: "Sa zgjat një seancë?", en: "How long is a session?" }, a: { sq: "Zakonisht 45–60 minuta, varësisht nga trajtimi. Kohëzgjatjen e saktë jua konfirmojmë gjatë rezervimit.", en: "Usually 45–60 minutes depending on treatment. We confirm the exact length when booking." } },
+    // TODO confirm with clinic
     { q: { sq: "A më duhet rekomandim nga mjeku?", en: "Do I need a doctor's referral?" }, a: { sq: "Jo, mund të vini edhe pa rekomandim. Nëse keni diagnozë ose raport mjekësor, sillni atë me vete.", en: "No, you can come without a referral. If you have a diagnosis or medical report, please bring it." } },
     { q: { sq: "Çfarë është trajtimi me Shockwave?", en: "What is shockwave therapy?" }, a: { sq: "Valë akustike që aplikohen në zonën me dhimbje për të ulur dhimbjen dhe për të nxitur shërimin, p.sh. te kalcifikimi i thembrës.", en: "Acoustic waves applied to the painful area to reduce pain and support healing, e.g. for heel spurs." } },
+    // TODO confirm with clinic
     { q: { sq: "Si e anuloj ose ndryshoj terminin?", en: "How do I cancel or reschedule?" }, a: { sq: "Na njoftoni në WhatsApp ose me telefon sa më herët që të jetë e mundur, që termini t'i jepet dikujt tjetër.", en: "Let us know on WhatsApp or by phone as early as possible so the slot can go to someone else." } },
     { q: { sq: "Çfarë t'i shkruaj në WhatsApp?", en: "What should I write on WhatsApp?" }, a: { sq: "Emrin, shërbimin që ju intereson, shqetësimin shkurtimisht dhe ditën/orën që ju përshtatet. Butoni “Rezervo në WhatsApp” e plotëson mesazhin automatikisht.", en: "Your name, the service, a short description of the problem and the day/time that suits you. The “Book on WhatsApp” button prefills it." } },
   ],

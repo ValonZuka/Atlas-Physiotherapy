@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, Phone, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { siteContent, ui } from "@/content/siteContent";
 import { useLang, waLink } from "@/lib/site";
 import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "./icons";
@@ -57,7 +57,7 @@ export function Header() {
       <div className="bg-brand-deep text-xs text-primary-foreground/85">
         <div className="container-site flex h-9 items-center justify-between gap-4">
           <span className="truncate">{t({ sq: "Terminet caktohen vetëm me WhatsApp ose telefon", en: "Appointments by WhatsApp or phone only" })}</span>
-          <a href={siteContent.business.phoneHref} className="flex shrink-0 items-center gap-1.5 font-semibold text-primary-foreground"><Phone className="size-3.5" />{siteContent.business.phoneDisplay}</a>
+          <a href={siteContent.business.phoneHref} className="shrink-0 font-semibold text-primary-foreground hover:underline">{siteContent.business.phoneDisplay}</a>
         </div>
       </div>
       <header className={`sticky top-0 z-40 border-b backdrop-blur-md transition-shadow duration-300 ${scrolled ? "border-border bg-background/90 shadow-soft" : "border-transparent bg-background/70"}`}>
