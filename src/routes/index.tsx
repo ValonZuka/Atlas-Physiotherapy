@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { siteContent } from "@/content/siteContent";
+import { getRequestOrigin } from "@/lib/origin.functions";
 import { LangProvider } from "@/lib/site";
 import { Header } from "@/components/site/Header";
 import { Hero, About } from "@/components/site/HeroAbout";
@@ -11,17 +12,41 @@ import { Why, Credentials, FirstVisit, Gallery, Team, Testimonials, Social, Faq,
 const title = "ATLAS Fizioterapi — Fizioterapi në Viti, Kosovë";
 const description = "Fizioterapi, rehabilitim, terapi manuale dhe trajtim me Shockwave në Viti. Rezervoni terminin në WhatsApp ose me telefon: 045 207 056.";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Physiotherapy",
-  name: siteContent.business.name,
-  telephone: "+383 45 207 056",
-  address: { "@type": "PostalAddress", streetAddress: siteContent.business.address.street, addressLocality: siteContent.business.address.city, addressCountry: "XK" },
-  sameAs: [siteContent.socials.instagram.url, siteContent.socials.facebook.url],
-};
+const dayCodes: Record<string, string> = { "hën": "Mo", "mar": "Tu", "mër": "We", "enj": "Th", "pre": "Fr", "sht": "Sa", "die": "Su" };
+/** Builds schema.org openingHours (e.g. "Mo-Sa 08:00-18:00") from siteContent.business.hours. */
+function openingHours() {
+  return siteContent.business.hours
+    .map((h) => {
+      const days = h.days.sq.toLowerCase().split(/[–-]/).map((d) => dayCodes[d.trim().slice(0, 3)]).filter(Boolean).join("-");
+      return days ? `${days} ${h.time.replace("–", "-")}` : "";
+    })
+    .filter(Boolean);
+}
+
+function buildJsonLd(origin: string) {
+  const b = siteContent.business;
+  const hours = openingHours();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Physiotherapy",
+    name: b.name,
+    url: `${origin}/`,
+    image: `${origin}${siteContent.images.hero}`,
+    telephone: "+383 45 207 056",
+    address: { "@type": "PostalAddress", streetAddress: b.address.street, addressLocality: b.address.city, addressCountry: "XK" },
+    geo: { "@type": "GeoCoordinates", latitude: b.geo.lat, longitude: b.geo.lng },
+    hasMap: b.mapLink,
+    ...(hours.length ? { openingHours: hours } : {}),
+    sameAs: [siteContent.socials.instagram.url, siteContent.socials.facebook.url],
+  };
+}
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  loader: async () => ({ origin: await getRequestOrigin() }),
+  head: ({ loaderData }) => {
+    const origin = loaderData?.origin ?? "";
+    const image = `${origin}${siteContent.images.hero}`;
+    return {
     meta: [
       { title },
       { name: "description", content: description },
@@ -32,9 +57,11 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
+      ...(origin ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : []),
     ],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
-  }),
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(buildJsonLd(origin)) }],
+    };
+  },
   component: Index,
 });
 

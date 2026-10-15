@@ -16,7 +16,7 @@ export function Hero() {
             <span className="italic text-primary">{t({ sq: "Jetoni plotësisht.", en: "Live fully." })}</span>
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-8 text-muted-foreground">{t({ sq: "Fizioterapi e përkushtuar dhe kujdes individual për t'ju ndihmuar të ndiheni më mirë në trupin tuaj — çdo ditë.", en: "Dedicated physiotherapy and individual care to help you feel better in your body — every day." })}</p>
-          <div className="mt-8"><CtaButtons /></div>
+          <div className="mt-8 flex flex-wrap items-center gap-5"><CtaButtons /><a href="#sherbimet" className="inline-flex items-center gap-1 font-semibold text-primary underline-offset-4 hover:underline">{t({ sq: "Shërbimet", en: "Services" })} →</a></div>
           <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground">
             {[{ sq: "Qasje profesionale", en: "Professional approach" }, { sq: "Kujdes individual", en: "Individual care" }, { sq: "Ambient modern", en: "Modern setting" }].map((x) => (
               <li key={x.sq} className="flex items-center gap-2"><span className="grid size-5 place-items-center rounded-full bg-sage-soft text-accent-foreground"><Check className="size-3" /></span>{t(x)}</li>
@@ -37,7 +37,7 @@ export function Hero() {
   );
 }
 
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
+function CountUp({ to, suffix = "" }: { to: number; suffix?: string | undefined }) {
   const [v, setV] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -45,7 +45,7 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setV(to);
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e?.isIntersecting) return;
       io.disconnect();
       const start = performance.now();
       const step = (now: number) => {

@@ -3,16 +3,16 @@ import { siteContent, ui } from "@/content/siteContent";
 import { useLang, waLink } from "@/lib/site";
 import { WhatsAppIcon } from "./icons";
 
-export function CtaButtons({ service, light = false }: { service?: string; light?: boolean }) {
+export function CtaButtons({ service, light = false, showCall = false }: { service?: string; light?: boolean; showCall?: boolean }) {
   const { t, lang } = useLang();
   return (
     <div className="flex flex-wrap gap-3">
       <a href={waLink(lang, service)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3.5 font-semibold text-brand-deep shadow-soft transition-transform hover:-translate-y-0.5">
         <WhatsAppIcon className="size-5" />{t(ui.bookWa)}
       </a>
-      <a href={siteContent.business.phoneHref} className={`inline-flex items-center gap-2 rounded-full border px-6 py-3.5 font-semibold transition-colors ${light ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}>
+      {showCall && <a href={siteContent.business.phoneHref} className={`inline-flex items-center gap-2 rounded-full border px-6 py-3.5 font-semibold transition-colors ${light ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}>
         <Phone className="size-4" />{t(ui.call)} · {siteContent.business.phoneDisplay}
-      </a>
+      </a>}
     </div>
   );
 }
