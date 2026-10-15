@@ -37,7 +37,7 @@ export function Hero() {
   );
 }
 
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
+function CountUp({ to, suffix = "" }: { to: number; suffix?: string | undefined }) {
   const [v, setV] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -45,7 +45,7 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setV(to);
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e?.isIntersecting) return;
       io.disconnect();
       const start = performance.now();
       const step = (now: number) => {

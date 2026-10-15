@@ -19,7 +19,7 @@ export function Why() {
         <SectionHead center eyebrow={t({ sq: "Pse ATLAS", en: "Why ATLAS" })} title={t({ sq: "Më shumë se një trajtim. Një përkushtim.", en: "More than a treatment. A commitment." })} />
         <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {siteContent.benefits.map((b, i) => {
-            const Icon = benefitIcons[i % benefitIcons.length];
+            const Icon = benefitIcons[i % benefitIcons.length]!;
             return (
               <li key={b.title.sq} className="reveal card-lift rounded-3xl border border-border bg-card p-7 shadow-soft" style={{ transitionDelay: `${(i % 3) * 90}ms` }}>
                 <span className="grid size-11 place-items-center rounded-xl bg-secondary text-primary"><Icon className="size-5" /></span>
@@ -64,7 +64,7 @@ export function FirstVisit() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setShown(steps.length);
     const timers: number[] = [];
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e?.isIntersecting) return;
       io.disconnect();
       steps.forEach((_, i) => timers.push(window.setTimeout(() => setShown(i + 1), i * 350)));
     }, { threshold: 0.25 });
